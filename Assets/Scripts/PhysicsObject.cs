@@ -108,46 +108,4 @@ public class PhysicsObject : MonoBehaviour
         // A virtual method can have an implementation of code,
         // but can be overridden by another class that's inheriting from it.
     }
-    
-    private void Movement_(Vector2 direction, bool yMovement)
-    {
-        float distance = direction.magnitude;
-        if(distance > MinimumMoveDistance)
-        {
-            int count = _rigidbody.Cast(direction, _contactFilter, _hitBuffer, distance + _shellRadius);
-            print(count);
-            
-            _hitBufferList.Clear();
-            for (int i = 0; i < count; i++)
-            {
-                _hitBufferList.Add(_hitBuffer[i]);
-            }
-
-            for (var i = 0; i < _hitBufferList.Count; i++)
-            {
-                Vector2 currentNormal = _hitBufferList[i].normal;
-                if (currentNormal.y > MinimumGroundNormalY)
-                {
-                    IsGrounded = true;
-                    if (yMovement)
-                    {
-                        _groundNormal = currentNormal;
-                        currentNormal.x = 0;
-                    }
-                }
-
-                float projection = Vector2.Dot(Velocity, currentNormal);
-                if (projection < 0)
-                {
-                    Velocity -= projection * currentNormal;
-                }
-
-                // float modifiedDistance = raycastHit.distance - _shellRadius;
-                float modifiedDistance = _hitBufferList[i].distance - distance;
-                distance = modifiedDistance < distance ? modifiedDistance : distance;
-            }
-        }
-        
-        _rigidbody.position += direction.normalized * direction;
-    }
 }
